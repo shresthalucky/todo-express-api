@@ -24,8 +24,12 @@
   },
   "homepage": "https://github.com/shresthalucky/todo-express-api#readme",
   "dependencies": {
+    "bcrypt": "^5.0.0",
     "dotenv": "^8.2.0",
-    "esm": "^3.2.25"
+    "esm": "^3.2.25",
+    "express": "^4.17.1",
+    "jsonwebtoken": "^8.5.1",
+    "mysql": "^2.18.1"
   },
   "devDependencies": {
     "eslint": "^7.7.0",
