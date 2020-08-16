@@ -13,13 +13,18 @@ export function generatePassword(req, res, next) {
 }
 
 export function generateToken(req, res, next) {
-  jwt.sign({ id: req.user.userId, username: req.user.username }, process.env.JWT_KEY, (err, token) => {
-    if (err) {
-      next(new ServerError(err.message));
+  jwt.sign(
+    { id: req.user.id, username: req.user.username },
+    process.env.JWT_KEY,
+    { algorithm: 'HS256' },
+    (err, token) => {
+      if (err) {
+        next(new ServerError(err.message));
+      }
+      req.user.token = token;
+      next();
     }
-    req.user.token = token;
-    next();
-  });
+  );
 }
 
 export function validatePassword(req, res, next) {

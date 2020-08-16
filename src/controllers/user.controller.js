@@ -1,10 +1,10 @@
-import User from '../models/user.model';
+import * as UserService from '../services/user.service';
 import { ServerError, UnauthorizedError } from '../helpers/error.helper';
 
 export async function createUser(req, res, next) {
   try {
     const { username, passwordHash } = req.body;
-    const userId = await User.addUser({ username, password: passwordHash });
+    const userId = await UserService.addUser(username, passwordHash);
 
     req.user = { id: userId, username: username };
     next();
@@ -21,7 +21,7 @@ export function loginUser(req, res, next) {
 
 export async function getUser(req, res, next) {
   try {
-    const user = await User.getUser(req.body.username);
+    const user = await UserService.getUser(req.body.username);
 
     if (user) {
       req.user = user;
