@@ -20,3 +20,7 @@ export function getTodo(todoId, userId) {
 export function listTodos(userId) {
   return Todo.listTodos(userId);
 }
+
+export function deleteTodo(todoId, userId) {
+  return Todo.deleteTodo(todoId, userId);
+}

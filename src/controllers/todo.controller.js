@@ -21,3 +21,9 @@ export async function listTodos(req, res, next) {
     next(new ServerError());
   }
 }
+
+export function deleteTodo(req, res, next) {
+  TodoService.deleteTodo(req.params.id, req.user.id)
+    .then(res.status(204).end())
+    .catch(() => next(new ServerError()));
+}

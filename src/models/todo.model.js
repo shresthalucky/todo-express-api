@@ -32,6 +32,16 @@ const Todo = {
         resolve(result);
       });
     });
+  },
+  deleteTodo: function (id, userId) {
+    return new Promise((resolve, reject) => {
+      connection.query(`DELETE FROM ${table} WHERE id = ? AND user = ?`, [id, userId], (err, result) => {
+        if (err) {
+          reject(err);
+        }
+        resolve(result);
+      });
+    });
   }
 };
 
