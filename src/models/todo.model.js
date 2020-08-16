@@ -42,6 +42,20 @@ const Todo = {
         resolve(result);
       });
     });
+  },
+  updateTodo: function (id, data, userId) {
+    return new Promise((resolve, reject) => {
+      connection.query(
+        `UPDATE ${table} SET ?, updated = UNIX_TIMESTAMP() WHERE id = ? AND user = ?`,
+        [data, id, userId],
+        (err, result) => {
+          if (err) {
+            reject(err);
+          }
+          resolve(result);
+        }
+      );
+    });
   }
 };
 

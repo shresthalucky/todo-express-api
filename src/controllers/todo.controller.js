@@ -27,3 +27,14 @@ export function deleteTodo(req, res, next) {
     .then(res.status(204).end())
     .catch(() => next(new ServerError()));
 }
+
+export async function updateTodo(req, res, next) {
+  try {
+    await TodoService.updateTodo(req.body, req.params.id, req.user.id);
+    const todo = await TodoService.getTodo(req.params.id, req.user.id);
+
+    res.status(201).json(todo);
+  } catch (err) {
+    next(new ServerError());
+  }
+}

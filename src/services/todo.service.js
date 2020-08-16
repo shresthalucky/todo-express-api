@@ -6,7 +6,6 @@ export function createTodo(todo, userId) {
     title,
     description,
     status: 'active',
-    created: Date.now(),
     user: userId
   };
 
@@ -23,4 +22,15 @@ export function listTodos(userId) {
 
 export function deleteTodo(todoId, userId) {
   return Todo.deleteTodo(todoId, userId);
+}
+
+export function updateTodo(todo, todoId, userId) {
+  const { title, description, status } = todo;
+  const data = {
+    title,
+    description,
+    status
+  };
+
+  return Todo.updateTodo(todoId, data, userId);
 }
