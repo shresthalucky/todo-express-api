@@ -12,4 +12,12 @@ router.post(
   userController.loginUser
 );
 
+router.post(
+  '/login',
+  userController.getUser,
+  userMiddleware.validatePassword,
+  userMiddleware.generateToken,
+  userController.loginUser
+);
+
 export default router;

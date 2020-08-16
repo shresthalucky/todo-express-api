@@ -12,6 +12,16 @@ const User = {
         resolve(result);
       });
     });
+  },
+  getUser: function (username) {
+    return new Promise((resolve, reject) => {
+      connection.query(`SELECT * FROM ${table} WHERE username = ?`, [username], (err, result) => {
+        if (err) {
+          reject(err);
+        }
+        resolve(result[0]);
+      });
+    });
   }
 };
 

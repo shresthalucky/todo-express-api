@@ -12,11 +12,24 @@ export function generatePassword(req, res, next) {
 }
 
 export function generateToken(req, res, next) {
-  jwt.sign({ id: req.body.userId, username: req.body.username }, process.env.JWT_KEY, (err, token) => {
+  jwt.sign({ id: req.user.userId, username: req.user.username }, process.env.JWT_KEY, (err, token) => {
     if (err) {
       next(err);
     }
-    req.token = token;
+    req.user.token = token;
     next();
+  });
+}
+
+export function validatePassword(req, res, next) {
+  bcrypt.compare(req.body.password, req.user.password, (err, result) => {
+    if (err) {
+      next(err);
+    }
+    if (result) {
+      next();
+    } else {
+      next(new Error('invalid password'));
+    }
   });
 }
