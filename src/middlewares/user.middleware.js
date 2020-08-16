@@ -1,10 +1,11 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import { ServerError, UnauthorizedError } from '../helpers/error.helper';
 
 export function generatePassword(req, res, next) {
   bcrypt.hash(req.body.password, Number(process.env.SALT_ROUNDS), (err, hash) => {
     if (err) {
-      next(err);
+      next(new ServerError(err.message));
     }
     req.body.passwordHash = hash;
     next();
@@ -14,7 +15,7 @@ export function generatePassword(req, res, next) {
 export function generateToken(req, res, next) {
   jwt.sign({ id: req.user.userId, username: req.user.username }, process.env.JWT_KEY, (err, token) => {
     if (err) {
-      next(err);
+      next(new ServerError(err.message));
     }
     req.user.token = token;
     next();
@@ -24,12 +25,12 @@ export function generateToken(req, res, next) {
 export function validatePassword(req, res, next) {
   bcrypt.compare(req.body.password, req.user.password, (err, result) => {
     if (err) {
-      next(err);
+      next(new ServerError(err.message));
     }
     if (result) {
       next();
     } else {
-      next(new Error('invalid password'));
+      next(new UnauthorizedError('Invalid Password'));
     }
   });
 }

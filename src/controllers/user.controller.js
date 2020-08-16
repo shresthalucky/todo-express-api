@@ -1,4 +1,5 @@
 import User from '../models/user.model';
+import { ServerError, UnauthorizedError } from '../helpers/error.helper';
 
 export async function createUser(req, res, next) {
   try {
@@ -8,14 +9,13 @@ export async function createUser(req, res, next) {
     req.user = { id: userId, username: username };
     next();
   } catch (err) {
-    next(err);
+    next(new ServerError());
   }
 }
 
 export function loginUser(req, res, next) {
   res.json({
-    token: req.user.token,
-    username: req.user.username
+    token: req.user.token
   });
 }
 
@@ -25,11 +25,11 @@ export async function getUser(req, res, next) {
 
     if (user) {
       req.user = user;
+      next();
     } else {
-      next(new Error('user not found'));
+      next(new UnauthorizedError('Invalid Username'));
     }
-    next();
   } catch (err) {
-    next(err);
+    next(new ServerError());
   }
 }
