@@ -11,3 +11,13 @@ export async function createTodo(req, res, next) {
     next(new ServerError());
   }
 }
+
+export async function listTodos(req, res, next) {
+  try {
+    const todos = await TodoService.listTodos(req.user.id);
+
+    res.status(200).json(todos);
+  } catch (err) {
+    next(new ServerError());
+  }
+}
