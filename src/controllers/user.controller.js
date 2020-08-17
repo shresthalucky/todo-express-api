@@ -1,21 +1,28 @@
+import HttpStatus from 'http-status-codes';
+
 import * as UserService from '../services/user.service';
-import { ServerError, UnauthorizedError } from '../helpers/error.helper';
+import { DatabaseError, UnauthorizedError } from '../helpers/error.helper';
 
 export async function createUser(req, res, next) {
   try {
     const { username, passwordHash } = req.body;
-    const userId = await UserService.addUser(username, passwordHash);
+    const userId = await UserService.createUser(username, passwordHash);
 
     req.user = { id: userId, username: username };
     next();
   } catch (err) {
-    next(new ServerError());
+    if (err.code === 'ER_DUP_ENTRY') {
+      next(new DatabaseError('Username already taken'));
+    }
+    next(new DatabaseError());
   }
 }
 
 export function loginUser(req, res, next) {
-  res.json({
-    token: req.user.token
+  res.status(HttpStatus.ACCEPTED).json({
+    token: req.user.token,
+    id: req.user.id,
+    username: req.user.username
   });
 }
 
@@ -30,6 +37,6 @@ export async function getUser(req, res, next) {
       next(new UnauthorizedError('Invalid Username'));
     }
   } catch (err) {
-    next(new ServerError());
+    next(new DatabaseError());
   }
 }

@@ -1,6 +1,9 @@
+import HttpStatus from 'http-status-codes';
+
 class AppError extends Error {
   constructor(message, statusCode) {
     super(message);
+    this.name = this.constructor.name;
     Error.captureStackTrace(this, this.constructor);
     this.statusCode = statusCode;
   }
@@ -8,24 +11,24 @@ class AppError extends Error {
 
 export class NotFoundError extends AppError {
   constructor(message) {
-    super(message || 'Not Found', 404);
-  }
-}
-
-export class UsernameTakenError extends AppError {
-  constructor(message) {
-    super(message || 'Invalid Username', 500);
+    super(message || 'Not Found', HttpStatus.NOT_FOUND);
   }
 }
 
 export class ServerError extends AppError {
   constructor(message) {
-    super(message || 'Internal Server Error', 500);
+    super(message || 'Internal Server Error', HttpStatus.INTERNAL_SERVER_ERROR);
   }
 }
 
 export class UnauthorizedError extends AppError {
   constructor(message) {
-    super(message || 'Unathorized', 401);
+    super(message || 'Unathorized', HttpStatus.UNAUTHORIZED);
+  }
+}
+
+export class DatabaseError extends AppError {
+  constructor(message) {
+    super(message || 'Database Error', HttpStatus.INTERNAL_SERVER_ERROR);
   }
 }
