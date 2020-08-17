@@ -32,3 +32,9 @@ export class DatabaseError extends AppError {
     super(message || 'Database Error', HttpStatus.INTERNAL_SERVER_ERROR);
   }
 }
+
+export class BadRequestError extends AppError {
+  constructor(message) {
+    super(message || 'Bad Request', HttpStatus.BAD_REQUEST);
+  }
+}
