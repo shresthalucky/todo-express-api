@@ -2,15 +2,18 @@ import jwt from 'jsonwebtoken';
 import { ServerError, BadRequestError } from '../helpers/error.helper';
 
 export function validateToken(req, res, next) {
-  if (!req.headers.authorization) {
+  const token = req.headers.authorization;
+
+  if (!token) {
     next(new BadRequestError('Authorization token not provided'));
   }
 
-  jwt.verify(req.headers.authorization, process.env.JWT_KEY, (err, decoded) => {
+  jwt.verify(token, process.env.JWT_KEY, (err, decoded) => {
     if (err) {
-      next(new ServerError());
+      next(new BadRequestError('Invalid Token'));
     }
     req.user = decoded;
+    req.user.token = token;
     next();
   });
 }
