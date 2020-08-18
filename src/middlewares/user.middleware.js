@@ -1,5 +1,6 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+
 import { ServerError, UnauthorizedError } from '../helpers/error.helper';
 
 export function generatePassword(req, res, next) {

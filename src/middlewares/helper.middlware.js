@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken';
-import { ServerError, BadRequestError } from '../helpers/error.helper';
+import { BadRequestError } from '../helpers/error.helper';
 
 export function validateToken(req, res, next) {
   const token = req.headers.authorization;

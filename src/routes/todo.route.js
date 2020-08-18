@@ -1,11 +1,13 @@
 import express from 'express';
+
 import * as TodoController from '../controllers/todo.controller';
+import TodoValidator from '../validators/todo.validator';
 
 const router = express.Router();
 
 router.get('/', TodoController.listTodos);
-router.post('/', TodoController.createTodo);
+router.post('/', TodoValidator, TodoController.createTodo);
 router.delete('/:id', TodoController.deleteTodo);
-router.patch('/:id', TodoController.updateTodo);
+router.put('/:id', TodoValidator, TodoController.updateTodo);
 
 export default router;
