@@ -2,6 +2,18 @@
 
 A REST API for user todo list application using Express. 
 
+.env file example
+```
+HOST=127.0.0.1
+PORT=1234
+JWT_KEY=secret
+DB_HOST=localhost
+DB_USER=user
+DB_PASSWORD=password
+DB_DATABASE=db_name
+SALT_ROUNDS=10
+```
+
 #### Base Url: /api
 
 ## Users
