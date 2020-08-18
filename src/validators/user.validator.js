@@ -7,6 +7,13 @@ const userSchema = Joi.object({
   password: Joi.string().min(1).max(50).required()
 });
 
+/**
+ * Validate request body.
+ *
+ * @param {Object} req
+ * @param {Object} res
+ * @param {Function} next
+ */
 export async function validator(req, res, next) {
   try {
     await userSchema.validateAsync(req.body);

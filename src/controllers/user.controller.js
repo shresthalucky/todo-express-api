@@ -3,6 +3,13 @@ import HttpStatus from 'http-status-codes';
 import * as UserService from '../services/user.service';
 import { DatabaseError, UnauthorizedError } from '../helpers/error.helper';
 
+/**
+ * Create a user.
+ *
+ * @param {Object} req
+ * @param {Object} res
+ * @param {Function} next
+ */
 export async function createUser(req, res, next) {
   try {
     const { username, passwordHash } = req.body;
@@ -18,6 +25,13 @@ export async function createUser(req, res, next) {
   }
 }
 
+/**
+ * Successful user login response.
+ *
+ * @param {Object} req
+ * @param {Object} res
+ * @param {Function} next
+ */
 export function loginUser(req, res, next) {
   res.status(HttpStatus.ACCEPTED).json({
     token: req.user.token,
@@ -26,6 +40,13 @@ export function loginUser(req, res, next) {
   });
 }
 
+/**
+ * Add user detail to request.
+ *
+ * @param {Object} req
+ * @param {Object} res
+ * @param {Function} next
+ */
 export async function getUser(req, res, next) {
   try {
     const user = await UserService.getUser(req.body.username);

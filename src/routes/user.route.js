@@ -7,8 +7,10 @@ import { validateToken } from '../middlewares/helper.middlware';
 
 const router = express.Router();
 
+// route to only validate user token and response user information
 router.get('/', validateToken, UserController.loginUser);
 
+// route to register new user
 router.post(
   '/register',
   UserValidator,
@@ -18,6 +20,7 @@ router.post(
   UserController.loginUser
 );
 
+// route to login user
 router.post(
   '/login',
   UserValidator,

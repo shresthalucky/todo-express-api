@@ -8,6 +8,13 @@ const todoSchema = Joi.object({
   status: Joi.string().valid('active', 'done').required()
 });
 
+/**
+ * Validate request body.
+ *
+ * @param {Object} req
+ * @param {Object} res
+ * @param {Function} next
+ */
 async function validator(req, res, next) {
   try {
     await todoSchema.validateAsync(req.body);
