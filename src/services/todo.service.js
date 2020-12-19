@@ -6,7 +6,7 @@ export function createTodo(todo, userId) {
     title,
     description,
     status: 'active',
-    user: userId
+    user_id: userId
   };
 
   return Todo.addTodo(data);

@@ -1,16 +1,5 @@
-import mysql from 'mysql';
+import pgp from 'pg-promise';
 
-const connection = mysql.createConnection({
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_DATABASE
-});
+const db = pgp()(process.env.DATABASE_URL);
 
-connection.connect((err) => {
-  if (err) {
-    console.error(err);
-  }
-});
-
-export default connection;
+export default db;
