@@ -18,7 +18,7 @@ export async function createUser(req, res, next) {
     req.user = { id: userId, username: username };
     next();
   } catch (err) {
-    if (err.code === 'ER_DUP_ENTRY') {
+    if (err.code === '23505') {
       next(new DatabaseError('Username already taken'));
     }
     next(new DatabaseError());

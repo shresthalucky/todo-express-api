@@ -3,8 +3,8 @@ import Joi from '@hapi/joi';
 import { BadRequestError } from '../helpers/error.helper';
 
 const todoSchema = Joi.object({
-  title: Joi.string().min(1).max(50).required(),
-  description: Joi.string().min(1).max(200).required(),
+  title: Joi.string().min(1).max(100).required(),
+  description: Joi.string().min(1).max(500).required(),
   status: Joi.string().valid('active', 'done').required()
 });
 

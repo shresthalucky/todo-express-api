@@ -1,10 +1,13 @@
 {
   "name": "todo-express-api",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "API for todo app using Express",
+  "engines": {
+    "node": "14.x"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon -r esm src/index.js"
+    "start": "node -r esm src/index.js"
   },
   "repository": {
     "type": "git",
@@ -32,14 +35,15 @@
     "express": "^4.17.1",
     "http-status-codes": "^1.4.0",
     "jsonwebtoken": "^8.5.1",
-    "mysql": "^2.18.1"
+    "mysql": "^2.18.1",
+    "pg": "^8.3.2",
+    "pg-promise": "^10.5.8"
   },
   "devDependencies": {
     "eslint": "^7.7.0",
     "eslint-config-leapfrog": "^3.0.0",
     "eslint-config-prettier": "^6.11.0",
     "eslint-plugin-prettier": "^3.1.4",
-    "nodemon": "^2.0.4",
     "prettier": "^2.0.5"
   }
 }
