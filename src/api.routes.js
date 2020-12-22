@@ -1,7 +1,7 @@
 import express from 'express';
 import HttpStatus from 'http-status-codes';
 
-import { validateToken } from './middlewares/helper.middlware';
+import { validateToken } from './middlewares/helper.middleware';
 import UserRouter from './routes/user.route';
 import TodoRouter from './routes/todo.route';
 

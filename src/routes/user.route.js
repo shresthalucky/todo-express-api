@@ -3,7 +3,7 @@ import express from 'express';
 import * as UserController from '../controllers/user.controller';
 import * as UserMiddleware from '../middlewares/user.middleware';
 import UserValidator from '../validators/user.validator';
-import { validateToken } from '../middlewares/helper.middlware';
+import { validateToken } from '../middlewares/helper.middleware';
 
 const router = express.Router();
 

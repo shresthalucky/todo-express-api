@@ -19,8 +19,9 @@ export function validateToken(req, res, next) {
     if (err) {
       next(new BadRequestError('Invalid Token'));
     }
+
     req.user = decoded;
-    req.user.token = token;
+    // req.user.token = token;
     next();
   });
 }

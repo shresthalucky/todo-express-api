@@ -7,3 +7,7 @@ export function createUser(username, passwordHash) {
 export function getUser(username) {
   return User.getUser(username);
 }
+
+export function getUsers() {
+  return User.getUsers();
+}

@@ -1,6 +1,6 @@
 import connection from '../db';
 
-const table = 'todo_table';
+const table = 'todos';
 
 const Todo = {
   addTodo: function (data) {
