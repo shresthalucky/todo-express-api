@@ -4,11 +4,9 @@ import jwt from 'jsonwebtoken';
 import { UnauthorizedError } from '../helpers/error.helper';
 
 export function customError(err) {
-  const { statusCode, message } = err.originalError;
-
   return {
-    statusCode: statusCode,
-    message: message
+    statusCode: err.originalError && err.originalError.statusCode,
+    message: err.message
   };
 }
 
@@ -46,6 +44,18 @@ export function generateToken(user) {
         reject(err);
       }
       resolve(token);
+    });
+  });
+}
+
+export function validateToken(token) {
+  return new Promise((resolve, reject) => {
+    jwt.verify(token, process.env.JWT_KEY, (err, decoded) => {
+      if (err) {
+        reject(err);
+      }
+
+      resolve(decoded);
     });
   });
 }

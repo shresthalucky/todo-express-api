@@ -5,14 +5,32 @@ import {
   GraphQLList,
   GraphQLFloat,
   GraphQLInputObjectType,
-  GraphQLID
+  GraphQLID,
+  GraphQLNonNull
 } from 'graphql';
 
 import * as UserServices from '../services/user.service';
 import * as TodoServices from '../services/todo.service';
 
 import { DatabaseError, ServerError } from '../helpers/error.helper';
-import { generatePassword, generateToken, validatePassword } from './helpers';
+import { generatePassword, generateToken, validatePassword, validateToken } from './helpers';
+
+const inputUserType = new GraphQLInputObjectType({
+  name: 'UserInput',
+  fields: {
+    username: { type: GraphQLString },
+    password: { type: GraphQLString }
+  }
+});
+
+const inputTodoType = new GraphQLInputObjectType({
+  name: 'TodoInput',
+  fields: {
+    title: { type: GraphQLString },
+    description: { type: GraphQLString },
+    status: { type: GraphQLString }
+  }
+});
 
 const todoType = new GraphQLObjectType({
   name: 'Todo',
@@ -23,6 +41,14 @@ const todoType = new GraphQLObjectType({
     status: { type: GraphQLString },
     created: { type: GraphQLFloat },
     updated: { type: GraphQLFloat }
+  }
+});
+
+const deleteTodoType = new GraphQLObjectType({
+  name: 'DeleteTodo',
+  fields: {
+    message: { type: GraphQLString },
+    todo: { type: todoType }
   }
 });
 
@@ -49,17 +75,17 @@ const queryType = new GraphQLObjectType({
     },
     user: {
       type: userType,
-      args: { username: { type: GraphQLString } },
+      args: { username: { type: GraphQLNonNull(GraphQLString) } },
       resolve: (source, { username }) => UserServices.getUser(username)
     },
     loginUser: {
       type: userType,
-      args: { username: { type: GraphQLString }, password: { type: GraphQLString } },
-      resolve: async (source, { username, password }) => {
+      args: { userData: { type: GraphQLNonNull(inputUserType) } },
+      resolve: async (source, { userData }) => {
         try {
-          const user = await UserServices.getUser(username);
+          const user = await UserServices.getUser(userData.username);
 
-          await validatePassword(password, user.password);
+          await validatePassword(userData.password, user.password);
 
           user.token = await generateToken(user);
 
@@ -72,27 +98,64 @@ const queryType = new GraphQLObjectType({
   }
 });
 
-const inputUserType = new GraphQLInputObjectType({
-  name: 'UserInput',
-  fields: {
-    username: { type: GraphQLString },
-    password: { type: GraphQLString }
-  }
-});
-
 const mutationType = new GraphQLObjectType({
   name: 'Mutation',
   fields: {
     createUser: {
       type: userType,
-      args: { userData: { type: inputUserType } },
+      args: { userData: { type: GraphQLNonNull(inputUserType) } },
       resolve: async (source, { userData }) => {
         try {
           const passwordHash = await generatePassword(userData.password);
+          const user = await UserServices.createUser(userData.username, passwordHash);
 
-          return await UserServices.createUser(userData.username, passwordHash);
+          return user;
         } catch (err) {
           throw new DatabaseError();
+        }
+      }
+    },
+    createTodo: {
+      type: todoType,
+      args: { todoData: { type: GraphQLNonNull(inputTodoType) } },
+      resolve: async (source, { todoData }, request) => {
+        try {
+          const user = await validateToken(request.headers.authorization);
+          const todo = await TodoServices.createTodo(todoData, user.id);
+
+          return todo;
+        } catch (err) {
+          throw new ServerError();
+        }
+      }
+    },
+    updateTodo: {
+      type: todoType,
+      args: { todoID: { type: GraphQLNonNull(GraphQLID) }, todoData: { type: GraphQLNonNull(inputTodoType) } },
+      resolve: async (source, { todoID, todoData }, request) => {
+        try {
+          const user = await validateToken(request.headers.authorization);
+          const todo = await TodoServices.updateTodo(todoData, todoID, user.id);
+
+          return todo;
+        } catch (err) {
+          throw new ServerError();
+        }
+      }
+    },
+    deleteTodo: {
+      type: deleteTodoType,
+      args: { todoID: { type: GraphQLNonNull(GraphQLID) } },
+      resolve: async (source, { todoID }, request) => {
+        try {
+          const user = await validateToken(request.headers.authorization);
+          const todo = await TodoServices.getTodo(todoID, user.id);
+
+          await TodoServices.deleteTodo(todoID, user.id);
+
+          return { message: 'todo deleted', todo };
+        } catch (err) {
+          throw new ServerError();
         }
       }
     }
