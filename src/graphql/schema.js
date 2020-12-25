@@ -12,7 +12,6 @@ import {
 import * as UserServices from '../services/user.service';
 import * as TodoServices from '../services/todo.service';
 
-import { DatabaseError, ServerError } from '../helpers/error.helper';
 import { generatePassword, generateToken, validatePassword, validateToken } from './helpers';
 
 const inputUserType = new GraphQLInputObjectType({
@@ -82,16 +81,13 @@ const queryType = new GraphQLObjectType({
       type: userType,
       args: { userData: { type: GraphQLNonNull(inputUserType) } },
       resolve: async (source, { userData }) => {
-        try {
-          const user = await UserServices.getUser(userData.username);
+        const user = await UserServices.getUser(userData.username);
 
+        if (user) {
           await validatePassword(userData.password, user.password);
-
           user.token = await generateToken(user);
 
           return user;
-        } catch (err) {
-          throw new ServerError();
         }
       }
     }
@@ -105,57 +101,43 @@ const mutationType = new GraphQLObjectType({
       type: userType,
       args: { userData: { type: GraphQLNonNull(inputUserType) } },
       resolve: async (source, { userData }) => {
-        try {
-          const passwordHash = await generatePassword(userData.password);
-          const user = await UserServices.createUser(userData.username, passwordHash);
+        const passwordHash = await generatePassword(userData.password);
+        const user = await UserServices.createUser(userData.username, passwordHash);
 
-          return user;
-        } catch (err) {
-          throw new DatabaseError();
-        }
+        return user;
       }
     },
     createTodo: {
       type: todoType,
       args: { todoData: { type: GraphQLNonNull(inputTodoType) } },
       resolve: async (source, { todoData }, request) => {
-        try {
-          const user = await validateToken(request.headers.authorization);
-          const todo = await TodoServices.createTodo(todoData, user.id);
+        const user = await validateToken(request.headers.authorization);
+        const todo = await TodoServices.createTodo(todoData, user.id);
 
-          return todo;
-        } catch (err) {
-          throw new ServerError();
-        }
+        return todo;
       }
     },
     updateTodo: {
       type: todoType,
       args: { todoID: { type: GraphQLNonNull(GraphQLID) }, todoData: { type: GraphQLNonNull(inputTodoType) } },
       resolve: async (source, { todoID, todoData }, request) => {
-        try {
-          const user = await validateToken(request.headers.authorization);
-          const todo = await TodoServices.updateTodo(todoData, todoID, user.id);
+        const user = await validateToken(request.headers.authorization);
+        const todo = await TodoServices.updateTodo(todoData, todoID, user.id);
 
-          return todo;
-        } catch (err) {
-          throw new ServerError();
-        }
+        return todo;
       }
     },
     deleteTodo: {
       type: deleteTodoType,
       args: { todoID: { type: GraphQLNonNull(GraphQLID) } },
       resolve: async (source, { todoID }, request) => {
-        try {
-          const user = await validateToken(request.headers.authorization);
-          const todo = await TodoServices.getTodo(todoID, user.id);
+        const user = await validateToken(request.headers.authorization);
+        const todo = await TodoServices.getTodo(todoID, user.id);
 
+        if (todo) {
           await TodoServices.deleteTodo(todoID, user.id);
 
           return { message: 'todo deleted', todo };
-        } catch (err) {
-          throw new ServerError();
         }
       }
     }
